@@ -1,13 +1,12 @@
 package com.lopes.newcontactlist
 
-import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lopes.newcontactlist.adapter.ListaAdapter
 import com.lopes.newcontactlist.db.DatabaseHandler
-import com.lopes.newcontactlist.model.Pessoa
+import com.lopes.newcontactlist.model.Contato
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -17,7 +16,7 @@ class MainActivity : AppCompatActivity() {
     var linearLayoutManager: LinearLayoutManager? = null
 
     // SQLite
-    var pessoaList = ArrayList<Pessoa>()
+    var contatoList = ArrayList<Contato>()
     var databaseHandler = DatabaseHandler(this)
 
 
@@ -28,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         initView()
 
         btnInsert.setOnClickListener {
-            val intent = Intent(this, NameActivity::class.java)
+            val intent = Intent(this, ContatoActivity::class.java)
             startActivityForResult(intent,1)
         }
     }
@@ -39,14 +38,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView(){
-        pessoaList = databaseHandler.pessoas()
-        listaAdapter = ListaAdapter(pessoaList,this, this::deleteAdapter)
+        contatoList = databaseHandler.contatos()
+        listaAdapter = ListaAdapter(contatoList,this, this::deleteAdapter)
         linearLayoutManager = LinearLayoutManager(this)
         recyclerview.layoutManager = linearLayoutManager
         recyclerview.adapter = listaAdapter
     }
     private fun deleteAdapter(position: Int){
-        pessoaList.removeAt(position)
+        contatoList.removeAt(position)
         listaAdapter!!.notifyItemRemoved(position)
     }
 }

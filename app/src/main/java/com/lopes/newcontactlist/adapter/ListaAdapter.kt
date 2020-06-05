@@ -9,15 +9,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.lopes.newcontactlist.NameActivity
+import com.lopes.newcontactlist.ContatoActivity
 import com.lopes.newcontactlist.R
 import com.lopes.newcontactlist.db.DatabaseHandler
-import com.lopes.newcontactlist.model.Pessoa
+import com.lopes.newcontactlist.model.Contato
 import kotlinx.android.synthetic.main.content_lista.view.*
 
-class ListaAdapter (nameList: List<Pessoa>, internal var ctx: Context, private val callbacks: (Int) -> Unit): RecyclerView.Adapter<ListaAdapter.ViewHolder>() {
+class ListaAdapter (nameList: List<Contato>, internal var ctx: Context, private val callbacks: (Int) -> Unit): RecyclerView.Adapter<ListaAdapter.ViewHolder>() {
 
-    internal var nameList: List<Pessoa> = ArrayList<Pessoa>()
+    internal var nameList: List<Contato> = ArrayList<Contato>()
     init {
         this.nameList = nameList
     }
@@ -36,14 +36,14 @@ class ListaAdapter (nameList: List<Pessoa>, internal var ctx: Context, private v
         if(position % 2 == 0) holder.name.setBackgroundColor(Color.GRAY)
         else holder.name.setBackgroundColor(Color.WHITE)
         holder.name.setOnClickListener {
-            val intent = Intent(ctx, NameActivity::class.java)
+            val intent = Intent(ctx, ContatoActivity::class.java)
             intent.putExtra("edit", true)
             intent.putExtra("position", name.id)
             ctx.startActivity(intent)
         }
         holder.btn.setOnClickListener {
             val databaseHandler = DatabaseHandler(ctx)
-            databaseHandler.deletePessoa(name.id)
+            databaseHandler.deleteContato(name.id)
             callbacks(position)
         }
     }

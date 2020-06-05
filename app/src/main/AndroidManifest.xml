@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".NameActivity">
+        <activity android:name=".ContatoActivity">
             <intent-filter>
                 <action android:name="android.intent.action" />
 

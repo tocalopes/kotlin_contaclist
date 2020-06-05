@@ -4,13 +4,14 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.lopes.newcontactlist.model.Pessoa
+import com.lopes.newcontactlist.model.Contato
 
 class DatabaseHandler (ctx: Context): SQLiteOpenHelper(ctx,DB_NAME,null,DB_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         val CREATE_TABLE =
-            "CREATE TABLE $TABLE_NAME ($ID INTEGER PRIMARY KEY, $NAME TEXT);"
+            "CREATE TABLE $TABLE_NAME ($ID INTEGER PRIMARY KEY,"+
+                    "$NAME TEXT, $EMAIL TEXT, $PHONE TEXT);"
         db?.execSQL(CREATE_TABLE)
     }
 
@@ -20,62 +21,68 @@ class DatabaseHandler (ctx: Context): SQLiteOpenHelper(ctx,DB_NAME,null,DB_VERSI
         onCreate(db)
     }
 
-    fun addPessoa(pessoa: Pessoa): Boolean{
+    fun addContato(contato: Contato): Boolean{
         val db = this.writableDatabase
         val values = ContentValues()
-        values.put(NAME, pessoa.nome)
+        values.put(NAME, contato.nome)
+        values.put(EMAIL, contato.email)
+        values.put(PHONE, contato.telefone)
         val _success = db.insert(TABLE_NAME,null,values)
         return (("$_success").toInt() != -1)
     }
 
-    fun getPessoa(_id: Int): Pessoa {
-        val pessoa = Pessoa()
+    fun getContato(_id: Int): Contato {
+        val contato = Contato()
         val db = writableDatabase
         val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $ID = $_id"
         val cursor = db.rawQuery(selectQuery, null)
         cursor?.moveToFirst()
-        pessoa.id = cursor.getInt(cursor.getColumnIndex(ID))
-        pessoa.nome = cursor.getString(cursor.getColumnIndex(NAME))
+        contato.id = cursor.getInt(cursor.getColumnIndex(ID))
+        contato.nome = cursor.getString(cursor.getColumnIndex(NAME))
+        contato.email = cursor.getString(cursor.getColumnIndex(EMAIL))
+        contato.telefone = cursor.getString(cursor.getColumnIndex(PHONE))
         cursor.close()
-        return pessoa
+        return contato
     }
 
-    fun pessoas(): ArrayList<Pessoa> {
-        val pessoaList = ArrayList<Pessoa>()
+    fun contatos(): ArrayList<Contato> {
+        val contatoList = ArrayList<Contato>()
         val db = writableDatabase
         val selectQuery = "SELECT * FROM $TABLE_NAME"
         val cursor = db.rawQuery(selectQuery, null)
         if(cursor != null){
             if(cursor.moveToFirst()){
                 do{
-                    val pessoa = Pessoa()
-                    pessoa.id = cursor.getInt(cursor.getColumnIndex(ID))
-                    pessoa.nome = cursor.getString(cursor.getColumnIndex(NAME))
-                    pessoaList.add(pessoa)
+                    val contato = Contato()
+                    contato.id = cursor.getInt(cursor.getColumnIndex(ID))
+                    contato.nome = cursor.getString(cursor.getColumnIndex(NAME))
+                    contatoList.add(contato)
                 }while(cursor.moveToNext())
             }
         }
         cursor.close()
-        return pessoaList
+        return contatoList
     }
 
-    fun updatePessoa(pessoa: Pessoa): Boolean{
+    fun updateContato(contato: Contato): Boolean{
         val db = this.writableDatabase
         val values = ContentValues().apply {
-            put(NAME, pessoa.nome)
+            put(NAME, contato.nome)
+            put(EMAIL, contato.email)
+            put(PHONE, contato.telefone)
         }
-        val _success = db.update(TABLE_NAME, values, ID + "=?", arrayOf(pessoa.id.toString())).toLong()
+        val _success = db.update(TABLE_NAME, values, ID + "=?", arrayOf(contato.id.toString())).toLong()
         db.close()
         return ("$_success").toInt() != -1
     }
 
-    fun deletePessoa(_id: Int): Boolean {
+    fun deleteContato(_id: Int): Boolean {
         val db = this.writableDatabase
         val _success = db.delete(TABLE_NAME, ID + "=?", arrayOf(_id.toString())).toLong()
         return ("$_success").toInt() != -1
     }
 
-    fun deleteAllPessoa(): Boolean {
+    fun deleteAllContato(): Boolean {
         val db = this.writableDatabase
         val _success = db.delete(TABLE_NAME, null,null).toLong()
         db.close()
@@ -84,9 +91,11 @@ class DatabaseHandler (ctx: Context): SQLiteOpenHelper(ctx,DB_NAME,null,DB_VERSI
 
     companion object {
         private val DB_VERSION = 1
-        private val DB_NAME = "Cadastro_uware"
-        private val TABLE_NAME = "Pessoa"
+        private val DB_NAME = "agenda"
+        private val TABLE_NAME = "Contato"
         private val ID = "Id"
         private val NAME = "Nome"
+        private val EMAIL = "Email"
+        private val PHONE = "Phone"
     }
 }

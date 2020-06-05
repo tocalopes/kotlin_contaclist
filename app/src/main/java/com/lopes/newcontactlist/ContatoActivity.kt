@@ -19,11 +19,14 @@ class ContatoActivity : AppCompatActivity() {
         val edit = intent.getBooleanExtra("edit", false)
         val position = intent.getIntExtra("position", 0)
         if(edit){
+            setTitle("Editar Contato");
             val contato = databaseHandler.getContato(position)
             edit_nome.setText(contato.nome)
             edit_email.setText(contato.email)
             edit_telefone.setText(contato.telefone)
             btnInsertContato.setText("Editar")
+        }else{
+            setTitle("Novo Contato");
         }
         btnInsertContato.setOnClickListener {
             if(edit_nome.text.toString() == ""){
